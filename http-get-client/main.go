@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -20,7 +21,7 @@ type Words struct {
 }
 
 func (w Words) GetResponse() string {
-	return  strings.Join(w.Words, ",")
+	return strings.Join(w.Words, ",")
 }
 
 type Occurrence struct {
@@ -40,12 +41,25 @@ type Response interface {
 }
 
 func main() {
-	args := os.Args
-	if len(args) < 2 {
-		fmt.Printf("usage: ./http-get-client <url>\n")
-		os.Exit(2)
+	var (
+		requestURL string
+		password   string
+		parsedURL  *url.URL
+		err error
+	)
+
+	flag.StringVar(&requestURL, "url", "", "url to access")
+	flag.StringVar(&password, "password", "", "use a password to access the API")
+
+	flag.Parse()
+
+	if parsedURL, err = url.ParseRequestURI(requestURL); err != nil {
+      fmt.Printf("validation error: %s\n Usage: ./http-get-client -h", err)
+			flag.Usage();
+			os.Exit(1)
 	}
-	res, err := handleRequest(args[1])
+
+	res, err := handleRequest(parsedURL.String())
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
@@ -60,9 +74,6 @@ func main() {
 }
 
 func handleRequest(requestURL string) (Response, error) {
-	if _, err := url.ParseRequestURI(requestURL); err != nil {
-		return nil, fmt.Errorf("validation error: %s", err)
-	}
 	response, err := http.Get(requestURL)
 	if err != nil {
 		return nil, fmt.Errorf("http-get error: %s", err)
@@ -81,8 +92,8 @@ func handleRequest(requestURL string) (Response, error) {
 	if err != nil {
 		return nil, RequestError{
 			HTTPCode: response.StatusCode,
-			Body: string(body),
-			Err: fmt.Sprintf("Page unmarshal error: %s", err),
+			Body:     string(body),
+			Err:      fmt.Sprintf("Page unmarshal error: %s", err),
 		}
 	}
 
@@ -94,8 +105,8 @@ func handleRequest(requestURL string) (Response, error) {
 		if err != nil {
 			return nil, RequestError{
 				HTTPCode: response.StatusCode,
-				Body: string(body),
-				Err: fmt.Sprintf("Words unmarshal error: %s", err),
+				Body:     string(body),
+				Err:      fmt.Sprintf("Words unmarshal error: %s", err),
 			}
 		}
 		return words, nil
@@ -106,8 +117,8 @@ func handleRequest(requestURL string) (Response, error) {
 		if err != nil {
 			return nil, RequestError{
 				HTTPCode: response.StatusCode,
-				Body: string(body),
-				Err: fmt.Sprintf("Occurences unmarshal error: %s", err),
+				Body:     string(body),
+				Err:      fmt.Sprintf("Occurences unmarshal error: %s", err),
 			}
 		}
 		return occurrence, nil
