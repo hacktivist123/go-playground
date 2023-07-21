@@ -11,10 +11,16 @@ import (
 	"strings"
 )
 
+type Page struct {
+	Name string `json:"page"`
+}
 type Words struct {
 	Page  string   `json:"page"`
 	Input string   `json:"input"`
 	Words []string `json:"words"`
+}
+type Occurrence struct {
+	Words map[string]int `json:"words"`
 }
 
 func main() {
@@ -38,15 +44,36 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
- if response.StatusCode != 200 {
-	fmt.Printf("Invalid output (HTTP Code %d): %s\n", response.StatusCode, body)
-	os.Exit(1)
- }
- var words Words
- err = json.Unmarshal(body, &words)
- if err != nil {
-	log.Fatal(err)
-}
+	if response.StatusCode != 200 {
+		fmt.Printf("Invalid output (HTTP Code %d): %s\n", response.StatusCode, body)
+		os.Exit(1)
+	}
+	var page Page
+	err = json.Unmarshal(body, &page)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-fmt.Printf("JSON Parsed\nPage: %s\nWords: %s\n", words.Page, strings.Join(words.Words, ","))
+	switch page.Name {
+	case "words":
+		var words Words
+		err = json.Unmarshal(body, &words)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("JSON Parsed\nPage: %s\nWords: %s\n", words.Page, strings.Join(words.Words, ","))
+
+	case "occurrence":
+		var occurrence Occurrence
+		err = json.Unmarshal(body, &occurrence)
+		if err != nil {
+			log.Fatal(err)
+		}
+		for word, occurrence := range occurrence.Words {
+			fmt.Printf("%s: %d\n", word, occurrence)
+		}
+	default:
+		fmt.Printf("Page not found \n")
+	}
+
 }
