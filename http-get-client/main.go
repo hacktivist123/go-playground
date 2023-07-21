@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -80,15 +79,24 @@ func handleRequest(requestURL string) (Response, error) {
 	var page Page
 	err = json.Unmarshal(body, &page)
 	if err != nil {
-		log.Fatal(err)
+		return nil, RequestError{
+			HTTPCode: response.StatusCode,
+			Body: string(body),
+			Err: fmt.Sprintf("Page unmarshal error: %s", err),
+		}
 	}
 
 	switch page.Name {
+
 	case "words":
 		var words Words
 		err = json.Unmarshal(body, &words)
 		if err != nil {
-			return nil, fmt.Errorf("unmarshal error: %s", err)
+			return nil, RequestError{
+				HTTPCode: response.StatusCode,
+				Body: string(body),
+				Err: fmt.Sprintf("Words unmarshal error: %s", err),
+			}
 		}
 		return words, nil
 
@@ -96,7 +104,11 @@ func handleRequest(requestURL string) (Response, error) {
 		var occurrence Occurrence
 		err = json.Unmarshal(body, &occurrence)
 		if err != nil {
-			return nil, fmt.Errorf("unmarshal error: %s", err)
+			return nil, RequestError{
+				HTTPCode: response.StatusCode,
+				Body: string(body),
+				Err: fmt.Sprintf("Occurences unmarshal error: %s", err),
+			}
 		}
 		return occurrence, nil
 	}
