@@ -43,18 +43,33 @@ type Response interface {
 func main() {
 	var (
 		requestURL string
+		password   string
 		parsedURL  *url.URL
-		err error
+		err        error
 	)
 
 	flag.StringVar(&requestURL, "url", "", "url to access")
+	flag.StringVar(&password, "password", "", "use a password to access the API")
 
 	flag.Parse()
 
 	if parsedURL, err = url.ParseRequestURI(requestURL); err != nil {
-      fmt.Printf("validation error: %s\n Usage: ./http-get-client -h", err)
-			flag.Usage();
+		fmt.Printf("validation error: %s\n Usage: ./http-get-client -h", err)
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	if password != "" {
+		token, err := handleLoginRequest(parsedURL.Scheme+"://"+parsedURL.Host+"/login", password)
+		if err != nil {
+			if requestErr, ok := err.(RequestError); ok {
+				fmt.Printf("Error: %s (HTTP Code: %d, Body: %s\n)", requestErr.Err, requestErr.HTTPCode, requestErr.Body)
+			}
+			fmt.Printf("Error: %s\n", err)
 			os.Exit(1)
+		}
+		fmt.Printf("token: %s\n", token)
+		os.Exit(0)
 	}
 
 	res, err := handleRequest(parsedURL.String())
