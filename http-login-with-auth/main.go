@@ -70,7 +70,10 @@ func main() {
 			fmt.Printf("Error: %s\n", err)
 			os.Exit(1)
 		}
-		
+		client.Transport = JWTTransport{
+			token:     token,
+			transport: http.DefaultTransport,
+		}
 	}
 
 	res, err := handleRequest(client, parsedURL.String())
