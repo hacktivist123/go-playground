@@ -9,7 +9,7 @@ type JWTTransport struct {
 	loginURL  string
 }
 
-func (m JWTTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (m *JWTTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if m.token == "" {
 		if m.password != "" {
 			token, err := handleLoginRequest(http.Client{}, m.loginURL, m.password)
