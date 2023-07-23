@@ -59,8 +59,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	client := http.Client{}
+
 	if password != "" {
-		token, err := handleLoginRequest(parsedURL.Scheme+"://"+parsedURL.Host+"/login", password)
+		token, err := handleLoginRequest(client, parsedURL.Scheme+"://"+parsedURL.Host+"/login", password)
 		if err != nil {
 			if requestErr, ok := err.(RequestError); ok {
 				fmt.Printf("Error: %s (HTTP Code: %d, Body: %s\n)", requestErr.Err, requestErr.HTTPCode, requestErr.Body)
@@ -68,11 +70,10 @@ func main() {
 			fmt.Printf("Error: %s\n", err)
 			os.Exit(1)
 		}
-		fmt.Printf("token: %s\n", token)
-		os.Exit(0)
+		
 	}
 
-	res, err := handleRequest(parsedURL.String())
+	res, err := handleRequest(client, parsedURL.String())
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
@@ -86,8 +87,8 @@ func main() {
 	fmt.Printf("Response: %s\n", res.GetResponse())
 }
 
-func handleRequest(requestURL string) (Response, error) {
-	response, err := http.Get(requestURL)
+func handleRequest(client http.Client, requestURL string) (Response, error) {
+	response, err := client.Get(requestURL)
 	if err != nil {
 		return nil, fmt.Errorf("http-get error: %s", err)
 	}
