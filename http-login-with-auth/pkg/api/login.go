@@ -35,6 +35,7 @@ func handleLoginRequest(client http.Client, loginURL, password string) (string, 
 	defer response.Body.Close()
 
 	resBody, err := io.ReadAll(response.Body)
+	
 	if err != nil {
 		return "", fmt.Errorf("ReadAll error: %s", err)
 	}

@@ -21,8 +21,13 @@ type Words struct {
 	Words []string `json:"words"`
 }
 
+type WordsPage struct {
+	Page
+	Words
+}
+
 func (w Words) GetResponse() string {
-	return strings.Join(w.Words, ",")
+	return fmt.Sprintf("Words: %s", strings.Join(w.Words, ", "))
 }
 
 type Occurrence struct {
@@ -30,11 +35,11 @@ type Occurrence struct {
 }
 
 func (o Occurrence) GetResponse() string {
-	out := []string{}
+	words := []string{}
 	for word, occurrence := range o.Words {
-		out = append(out, fmt.Sprintf("%s (%d)", word, occurrence))
+		words = append(words, fmt.Sprintf("%s (%d)", word, occurrence))
 	}
-	return strings.Join(out, ",")
+	return fmt.Sprintf("Words: %s", strings.Join(words, ", "))
 }
 
 func (a API) HandleGetRequest(requestURL string) (Response, error) {
