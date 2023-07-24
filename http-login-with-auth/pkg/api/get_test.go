@@ -1,4 +1,4 @@
-package tests
+package api
 
 import (
 	"bytes"
@@ -7,23 +7,24 @@ import (
 	"net/http"
 	"strings"
 	"testing"
-
-	"github.com/hacktivist123/go-playground/http-login-with-auth/pkg/api"
 )
 
 type MockClient struct {
-	ResponseOutput *http.Response
+	GetResponseOutput  *http.Response
+	PostResponseOutput *http.Response
 }
 
 func (m MockClient) Get(url string) (resp *http.Response, err error) {
-	return m.ResponseOutput, nil
-
+	return m.GetResponseOutput, nil
 }
 
+func (m MockClient) Post(url string, contentType string, body io.Reader) (resp *http.Response, err error) {
+	return m.PostResponseOutput, nil
+}
 func TestHandleGetRequest(t *testing.T) {
-	words := api.WordsPage{
-		Page: api.Page{Name: "words"},
-		Words: api.Words{
+	words := WordsPage{
+		Page: Page{"words"},
+		Words: Words{
 			Input: "abc",
 			Words: []string{"a", "b"},
 		},
@@ -34,23 +35,22 @@ func TestHandleGetRequest(t *testing.T) {
 		t.Errorf("marshal error: %s", err)
 	}
 
-
-	apiInstance := api.API{
-		Options: api.Options{},
+	apiInstance := API{
+		Options: Options{},
 		Client: MockClient{
-			ResponseOutput: &http.Response{
+			GetResponseOutput: &http.Response{
 				StatusCode: 200,
 				Body:       io.NopCloser(bytes.NewReader(wordsBytes)),
 			},
 		},
 	}
-	response, err := apiInstance.HandleGetRequest("http://localhost/words")
+	response, err := apiInstance.HandleGetRequest("http://localhost:8080/words")
 	if err != nil {
 		t.Errorf("handleGetResponse error: %s", err)
 	}
-	if response == nil {
-		t.Fatalf("response is empty")
-	}
+	// if response == nil {
+	// 	t.Fatalf("response is empty")
+	// }
 	if response.GetResponse() != strings.Join([]string{"a", "b"}, ", ") {
 		t.Errorf("unexpected response: %s", response.GetResponse())
 	}

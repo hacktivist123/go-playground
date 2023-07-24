@@ -62,8 +62,6 @@ func (a API) HandleGetRequest(requestURL string) (Response, error) {
 		return nil, fmt.Errorf("invalid output (HTTP Code %d): %s", response.StatusCode, string(body))
 	}
 
-	var page Page
-
 	if !json.Valid(body) {
 		return nil, RequestError{
 			Err:      "response is not a json",
@@ -71,6 +69,8 @@ func (a API) HandleGetRequest(requestURL string) (Response, error) {
 			Body:     string(body),
 		}
 	}
+
+	var page Page
 
 	err = json.Unmarshal(body, &page)
 	if err != nil {
@@ -86,10 +86,15 @@ func (a API) HandleGetRequest(requestURL string) (Response, error) {
 		var words Words
 		err = json.Unmarshal(body, &words)
 		if err != nil {
-			return nil, fmt.Errorf("Words unmarshal error: %s", err)
+			return nil, RequestError{
+				HTTPCode: response.StatusCode,
+				Body:     string(body),
+				Err:      fmt.Sprintf("Words unmarshal error: %s", err),
+			}
 		}
 
 		return words, nil
+
 	case "occurrence":
 		var occurrence Occurrence
 		err = json.Unmarshal(body, &occurrence)
@@ -101,5 +106,4 @@ func (a API) HandleGetRequest(requestURL string) (Response, error) {
 	}
 
 	return nil, nil
-
 }

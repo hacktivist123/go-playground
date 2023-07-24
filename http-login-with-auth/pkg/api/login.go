@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 )
 
 type LoginRequest struct {
@@ -16,7 +15,7 @@ type LoginResponse struct {
 	Token string `json:"token"`
 }
 
-func handleLoginRequest(client http.Client, loginURL, password string) (string, error) {
+func handleLoginRequest(client ClientIface, loginURL, password string) (string, error) {
 	// Make POST request to login endpoint
 	loginRequest := LoginRequest{
 		Password: password,
@@ -35,7 +34,7 @@ func handleLoginRequest(client http.Client, loginURL, password string) (string, 
 	defer response.Body.Close()
 
 	resBody, err := io.ReadAll(response.Body)
-	
+
 	if err != nil {
 		return "", fmt.Errorf("ReadAll error: %s", err)
 	}

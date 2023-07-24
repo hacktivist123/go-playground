@@ -7,12 +7,13 @@ type JWTTransport struct {
 	transport http.RoundTripper
 	password  string
 	loginURL  string
+	httpClient ClientIface
 }
 
 func (m *JWTTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if m.token == "" {
 		if m.password != "" {
-			token, err := handleLoginRequest(http.Client{}, m.loginURL, m.password)
+			token, err := handleLoginRequest(m.httpClient, m.loginURL, m.password)
 			if err != nil {
 				if err != nil {
 					return nil, err
