@@ -3,7 +3,8 @@ go 1.20
 use (
 	./go-helloworld
 	./http-get-client
-	./implement-readAll
 	./http-login-with-auth
+	./implement-json-parsing
+	./implement-readAll
 	./test-server
 )
