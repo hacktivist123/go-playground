@@ -6,5 +6,6 @@ use (
 	./http-login-with-auth
 	./implement-json-parsing
 	./implement-readAll
+	./pointers-demo
 	./test-server
 )
