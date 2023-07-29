@@ -1,6 +1,7 @@
 go 1.20
 
 use (
+	./array-n-slices-test
 	./go-helloworld
 	./http-get-client
 	./http-login-with-auth
