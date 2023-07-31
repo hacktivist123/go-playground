@@ -9,4 +9,5 @@ use (
 	./implement-readAll
 	./pointers-demo
 	./test-server
+	./types-demo
 )
