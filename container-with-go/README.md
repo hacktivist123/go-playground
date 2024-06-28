@@ -1,4 +1,4 @@
-This is a pratice session from Liz Rice's famous [Building a container from scratch in Go](https://www.youtube.com/watch?v=Utf-A4rODH8&list=PLsGzjZLGKzelYamS5vfclKVNy9CrzT0t7&index=3) talk at Container Camp
+This is a practice session from Liz Rice's famous [Building a container from scratch in Go](https://www.youtube.com/watch?v=Utf-A4rODH8&list=PLsGzjZLGKzelYamS5vfclKVNy9CrzT0t7&index=3) talk at Container Camp
 
 Learned about:
 - Containers
