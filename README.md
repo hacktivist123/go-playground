@@ -1,2 +1,5 @@
 # go-playground
-A playground for understanding the Go programming language
+
+Where I try to play and understand the Go programming language
+
+## Go Intro Notes

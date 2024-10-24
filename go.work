@@ -3,7 +3,6 @@ go 1.21.4
 use (
 	./array-n-slices-test
 	./container-with-go
-	./go-for-devops/init
 	./go-helloworld
 	./http-get-client
 	./http-login-with-auth
@@ -11,5 +10,4 @@ use (
 	./pointers-demo
 	./test-server
 	./types-demo
-
 )
