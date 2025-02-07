@@ -56,4 +56,57 @@ The "standard" sizes that should be used unless you have a specific performance 
 
 - float: `s := fmt.Sprintf("I am %f years old", 10.523)`
 
+
+## The Initial Statement of an If Block
+
+An if conditional can have an "initial" statement. The variable(s) created in the initial statement are only defined within the scope of the if body.
+
+```go
+if INITIAL_STATEMENT; CONDITION {
+}
+```
+
+Why Would I Use This?
+It has two valuable purposes:
+
+- It's a bit shorter
+- It limits the scope of the initialized variable(s) to the if block
+
+For example, instead of writing:
+
+```go
+length := getLength(email)
+if length < 1 {
+    fmt.Println("Email is invalid")
+}
+```
+
+We can do:
+
+```go
+if length := getLength(email); length < 1 {
+    fmt.Println("Email is invalid")
+}
+```
+
+In the example above, length isn't available in the parent scope, which is nice because we don't need it there - we won't accidentally use it elsewhere in the function.
+
+- Variable in Go are passed by value. "Pass by value" means that when a variable is passed into a function, that function receives a copy of the variable. The function is unable to mutate the caller's original data.
+
+- _ means blank identifier, this is used to ignore a variable in a function, mainly to bypass the go compiler error for unused variable
+
+- Return values may be given names, and if they are, then they are treated the same as if they were new variables defined at the top of the function. Named return values are best thought of as a way to document the purpose of the returned values.
+
+- When you use defer, it tells Go: “Run this function later, right before the current function ends.”
+
+- Unlike Python, Go is not function-scoped, it's block-scoped. Variables declared inside a block are only accessible within that block (and its nested blocks).
+
+- Blocks are defined by curly braces {}. New blocks are created for:
+
+    - Functions
+    - Loops
+    - If statements
+    - Switch statements
+    - Select statements
+    - Explicit blocks
 - 
